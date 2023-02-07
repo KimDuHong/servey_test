@@ -12,6 +12,7 @@ class servey(CommonModel):
         null=True,
         blank=True,
     )
+    branch = models.CharField(max_length=4)
 
     def __str__(self) -> str:
         return self.title

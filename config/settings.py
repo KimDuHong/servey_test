@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,19 +21,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-(!cr#p=bhmvk!#sn3me)+fit%e058#u@9s3h(mc80!1f$ccl+u"
+SECRET_KEY = ("django-insecure-(!cr#p=bhmvk!#sn3me)+fit%e058#u@9s3h(mc80!1f$ccl+u",)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+# https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
+
 ALLOWED_HOSTS = ["*"]
 
+RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 THIRD_PARTY_APPLICATION = [
     "rest_framework",
     "rest_framework.authtoken",
-    # "corsheaders",
+    "corsheaders",
     "common.apps.CommonConfig",
     "servey.apps.ServeyConfig",
     "result.apps.ResultConfig",
@@ -50,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -129,3 +137,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
