@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "server-db"
+version = "0.1.0"
+description = ""
+authors = ["izunaaaaa <art970@naver.com>"]
+readme = "README.md"
+packages = [{include = "server_db"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.1.6"
+djangorestframework = "^3.14.0"
+pillow = "^9.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
