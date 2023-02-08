@@ -17,9 +17,19 @@ class KindSerializers(serializers.ModelSerializer):
 
 
 class ResultSerializer(serializers.ModelSerializer):
-    count = serializers.CharField(read_only=True)
     kind = KindSerializers(read_only=True)
 
     class Meta:
         model = Result
         fields = "__all__"
+
+
+class ResultCountSerializer(serializers.ModelSerializer):
+    count = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Result
+        fields = (
+            "count",
+            "mbti",
+        )

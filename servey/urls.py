@@ -9,7 +9,7 @@ from . import views
 urlpatterns = [
     path(
         "",
-        views.servey.as_view(
+        views.serveyList.as_view(
             {
                 "get": "list",
                 # "post": "create",
@@ -18,12 +18,13 @@ urlpatterns = [
     ),
     path(
         "<int:pk>",
-        views.servey.as_view(
+        views.serveyList.as_view(
             {
                 "get": "retrieve",
-                "put": "partial_update",
-                "delete": "destroy",
+                # "put": "partial_update",
+                # "delete": "destroy",
             }
         ),
     ),
+    path("count", views.serveyCountList.as_view()),
 ]

@@ -8,4 +8,16 @@ class ServeySerializers(serializers.ModelSerializer):
         exclude = (
             "created_at",
             "updated_at",
+            "first_count",
+            "second_count",
+        )
+
+
+class ServeyCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = servey
+        fields = (
+            "branch",
+            "first_count",
+            "second_count",
         )
