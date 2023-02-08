@@ -22,17 +22,18 @@ class ResultDetail(APIView):
         except Result.DoesNotExist:
             raise ParseError(11)
 
-    # def get(self, request, mbti):
-    #     mbti = mbti.upper()
-    #     result = self.get_object(mbti)
-    #     serializer = ResultSerializer(result)
-    #     return Response(serializer.data)
+    def get(self, request, mbti):
+        mbti = mbti.upper()
+        result = self.get_object(mbti)
+        serializer = ResultSerializer(result)
+        return Response(serializer.data)
 
     def post(self, request, mbti):
         mbti = mbti.upper()
         result = self.get_object(mbti)
         result.count += 1
         answer = request.data.get("answer")
+        print(answer)
         if not answer:
             raise ParseError("Answer is required")
         elif type(answer) == int:
