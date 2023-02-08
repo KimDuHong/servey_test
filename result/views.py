@@ -45,13 +45,13 @@ class ResultDetail(APIView):
                 raise ParseError("Answer contains only 1 or 2")
 
         for idx, data in enumerate(answer):
-            _servey = servey.objects.get(pk=idx + 1)
+            servey_get = servey.objects.get(pk=idx + 1)
 
             if data == "1":
-                _servey.first_count += 1
+                servey_get.first_count += 1
             else:
-                _servey.second_count += 1
-            _servey.save()
+                servey_get.second_count += 1
+            servey_get.save()
         result.save()
         serializer = ResultSerializer(result)
         return Response(serializer.data)
