@@ -20,7 +20,7 @@ class ResultDetail(APIView):
         try:
             return Result.objects.get(mbti=mbti)
         except Result.DoesNotExist:
-            raise ParseError(11)
+            raise NotFound
 
     def get(self, request, mbti):
         mbti = mbti.upper()
@@ -73,16 +73,16 @@ class ResultCount(APIView):
         new_serializer_data.insert(0, {"all_count": all_count})
         return Response(new_serializer_data)
 
-    def post(self, request):
-        request.data["mbti"] = request.data["mbti"].upper()
-        serializer = ResultCountSerializer(data=request.data)
-        if serializer.is_valid():
-            if request.data.get("count") is True:
-                result = Result.objects.get(mbti=request.data.get("mbti"))
-                result.count += 1
-                result.save()
-                return Response(ResultCountSerializer(result).data)
-            else:
-                raise ParseError("Can't update count")
-        else:
-            return Response(serializer.errors, status=400)
+    # def post(self, request):
+    #     request.data["mbti"] = request.data["mbti"].upper()
+    #     serializer = ResultCountSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         if request.data.get("count") is True:
+    #             result = Result.objects.get(mbti=request.data.get("mbti"))
+    #             result.count += 1
+    #             result.save()
+    #             return Response(ResultCountSerializer(result).data)
+    #         else:
+    #             raise ParseError("Can't update count")
+    #     else:
+    #         return Response(serializer.errors, status=400)
