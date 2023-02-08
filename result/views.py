@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Result
-from .serializers import ResultSerializer
-from rest_framework.exceptions import NotFound
+from servey.models import servey
+from .serializers import ResultSerializer, ResultCountSerializer
+from rest_framework.exceptions import NotFound, ParseError
 
 # Create your views here.
 
@@ -19,10 +20,68 @@ class ResultDetail(APIView):
         try:
             return Result.objects.get(mbti=mbti)
         except Result.DoesNotExist:
-            raise NotFound
+            raise ParseError(11)
 
-    def get(self, request, mbti):
+    # def get(self, request, mbti):
+    #     mbti = mbti.upper()
+    #     result = self.get_object(mbti)
+    #     serializer = ResultSerializer(result)
+    #     return Response(serializer.data)
+
+    def post(self, request, mbti):
         mbti = mbti.upper()
         result = self.get_object(mbti)
+        result.count += 1
+        answer = request.data.get("answer")
+        if not answer:
+            raise ParseError("Answer is required")
+        elif type(answer) == int:
+            answer = str(answer)
+
+        if len(answer) != 9:
+            raise ParseError("Answer length must be 9")
+        for i in answer:
+            if i != "1" and i != "2":
+                raise ParseError("Answer contains only 1 or 2")
+
+        for idx, data in enumerate(answer):
+            _servey = servey.objects.get(pk=idx + 1)
+
+            if data == "1":
+                _servey.first_count += 1
+            else:
+                _servey.second_count += 1
+            _servey.save()
+        result.save()
         serializer = ResultSerializer(result)
         return Response(serializer.data)
+
+
+class ResultCount(APIView):
+    def get_object(self, mbti):
+        try:
+            return Result.objects.get(mbti=mbti)
+        except Result.DoesNotExist:
+            raise NotFound
+
+    def get(self, request):
+        result = Result.objects.all()
+        all_count = sum(r.count for r in result)
+        serializer = ResultCountSerializer(result, many=True)
+        new_serializer_data = list(serializer.data)
+        new_serializer_data.insert(0, {"all_count": all_count})
+        return Response(new_serializer_data)
+
+    def post(self, request):
+        request.data["mbti"] = request.data["mbti"].upper()
+        serializer = ResultCountSerializer(data=request.data)
+        if serializer.is_valid():
+            if request.data.get("count") is True:
+                result = Result.objects.get(mbti=request.data.get("mbti"))
+                result.count += 1
+                result.save()
+                return Response(ResultCountSerializer(result).data)
+            else:
+                raise ParseError("Can't update count")
+        else:
+            return Response(serializer.errors, status=400)
