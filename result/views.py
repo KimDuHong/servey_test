@@ -54,6 +54,7 @@ class ResultDetail(APIView):
                 servey_get.second_count += 1
             servey_get.save()
         result.save()
+        print(1)
         serializer = ResultSerializer(result)
         return Response(serializer.data)
 
@@ -86,3 +87,57 @@ class ResultCount(APIView):
     #             raise ParseError("Can't update count")
     #     else:
     #         return Response(serializer.errors, status=400)
+
+
+from django.shortcuts import render
+from .models import Result, Kind
+from .serializers import ResultCountSerializer
+from servey.serializers import ServeyCountSerializer
+
+
+def bar_chart(request):
+    all_result = servey.objects.all()
+    serializer = ServeyCountSerializer(all_result, many=True)
+    result = Result.objects.all()
+    all_count = 0
+    max_count = 0
+    for i in result:
+        if max_count < i.count:
+            max_count = i.count
+        all_count += i.count
+    max_mbti = Result.objects.get(count=max_count)
+    chart_data = []
+    # print(chart_data == list(serializer.data))
+    # print(chart_data)
+    for i in serializer.data:
+        dic = {}
+        dic["first_answer"] = i["first_answer"]
+        dic["second_answer"] = i["second_answer"]
+        dic["first_count"] = i["first_count"]
+        dic["second_count"] = i["second_count"]
+        chart_data.append(dic)
+    percent = int(max_count / all_count * 100)
+
+    all_mbti_result = Result.objects.all()
+    serializer = ResultCountSerializer(all_mbti_result, many=True)
+    mbti_chart_data = []
+    # print(chart_data == list(serializer.data))
+    # print(chart_data)
+    for i in serializer.data:
+        dic = {}
+        dic["mbti"] = i["mbti"]
+        dic["count"] = i["count"]
+        mbti_chart_data.append(dic)
+    return render(
+        request,
+        "bar_chart.html",
+        {
+            "chart_data": chart_data,
+            "max_mbti": max_mbti,
+            "all_count": all_count,
+            "max_count": max_count,
+            "percent": percent,
+            "kind": max_mbti.kind,
+            "mbti_chart_data": mbti_chart_data,
+        },
+    )

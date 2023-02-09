@@ -19,5 +19,7 @@ class ServeyCountSerializer(serializers.ModelSerializer):
         fields = (
             "branch",
             "first_count",
+            "first_answer",
             "second_count",
+            "second_answer",
         )

@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+# from .views import bar_chart
+
 # urlpatterns = [
 #     path("", views.Categories.as_view()),
 #     path("<int:pk>", views.CategoryDetail.as_view()),
@@ -27,4 +29,5 @@ urlpatterns = [
         ),
     ),
     path("count", views.serveyCountList.as_view()),
+    # path("bar_chart/", bar_chart, name="bar_chart"),
 ]
