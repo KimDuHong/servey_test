@@ -61,7 +61,7 @@
       img{
         position:absolute;
         left:2%;
-        width: 6%;
+        width: 10%;
         height: 6%;
         padding:1%
       }
@@ -319,10 +319,12 @@
       var mbti_chartData = {{ mbti_chart_data|safe }};
       var x = [];
       var y = [];
+      var per_y =[];
 
       for (var i = 0; i < mbti_chartData.length; i++) {
         x.push(mbti_chartData[i].mbti);
         y.push(mbti_chartData[i].count);
+        per_y.push(parseInt(mbti_chartData[i].count/{{all_count}}*100));
       }
 
       var trace1 = {
@@ -330,19 +332,19 @@
         y: y,
         type: 'bar',
         name: '사람 수',
+
         marker: {
-          opacity:0.5,
+          opacity:0.6,
           color: 'gray',
           line: {
             width: 1
           }
         },
-        
       };
-
+      
       var trace2 = {
         x: x,
-        y: y,
+        y: per_y,
         type: 'scatter',
         mode: 'lines+markers',
         marker: {
@@ -353,7 +355,7 @@
         line: {
           width: 3
         },
-        name: '사람 수'
+        name: '비율(%)',
       };
 
       var mbti_data = [trace1, trace2];
@@ -372,5 +374,6 @@
 
       Plotly.newPlot('bar-charts', mbti_data, mbti_layout);
       Plotly.newPlot('bar-chart', data, layout);
+      
   </script>
 </html>
