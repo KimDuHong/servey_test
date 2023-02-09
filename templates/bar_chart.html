@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        height: 100vh;
+        margin :0;
+        background-color:rgb(240,240,240);
+        
+      }
+      #top{
+        width: 100%;
+        height: 8%;
+        display:flex;
+        align-items : center;
+        {% comment %} border: 5px solid blue; {% endcomment %}
+        background-color:black;
+      }
+      button{
+        background:black;
+        color:white;
+        border:none;
+        position:absolute;
+        right:3%;
+        height:5%;
+        font-size:1.2em;
+        padding:0 2em;
+        cursor:pointer;
+        transition:800ms ease all;
+        outline:none;
+      }
+      h1{
+        margin:auto ;
+        color:white;
+      }
+      button:hover{
+        background: white;
+        color:black;
+      }
+      button:before,button:after{
+        content:'';
+        position:absolute;
+        top:0;
+        right:0;
+        height:5px;
+        width:0;
+        background: black;
+        transition:400ms ease all;
+      }
+      button:after{
+        right:inherit;
+        top:inherit;
+        left:0;
+        bottom:0;
+      }
+      button:hover:before,button:hover:after{
+        width:100%;
+        transition:800ms ease all;
+      }
+      img{
+        position:absolute;
+        left:3%;
+        width: 6%;
+        height: 6%;
+      }
+      .main {
+        display: flex;
+        flex-direction: row;
+        height: 50%;
+        width:100%;
+        {% comment %} border: 5px solid white; {% endcomment %}
+        justify-content: start;
+      }
+      #simple{
+        width:100%;
+        height:15%;
+        display:flex;
+        background: rgb(220,220,220);
+        border-bottom:5px solid black;
+        justify-content: space-evenly;
+      }
+      #simple>.box{
+        height:100%;
+        width:20%;
+        display:flex;
+        align-items: center;
+        flex-direction:column;
+        justify-content: space-evenly;
+      }
+      
+      .container {
+        height: 100%;
+        border: 1px solid black;
+        width: 47%;
+        display: flex;
+        background-color:white;
+        margin:2%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .count_top{
+        font-weight:bold;
+
+        font-size: 1.2rem;
+        color:rgb(96,115,138);
+      }
+      .count{
+        font-size: 2.5rem;
+        {% comment %} color:rgb(96,115,138); {% endcomment %}
+        color:black;
+        font-weight:bold;
+      }
+      .percent{
+        font-size:0.8rem;
+        color:rgb(96,115,138);
+
+      }
+      #bar-chart {
+        border: 1px solid black;
+        width: 47%;
+        height: 100%;
+        margin:2%;
+      }
+      .content{
+        height: 100%;
+        {% comment %} margin-left:10%; {% endcomment %}
+        {% comment %} margin-right:10%; {% endcomment %}
+        width: 90%;
+        {% comment %} height: 80%; {% endcomment %}
+        display: flex;
+        {% comment %} padding-left:5%; {% endcomment %}
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+      }
+      .answer{
+        {% comment %} width: 100vw; {% endcomment %}
+        font-size: 0.7rem;
+        margin : 1%;
+      }
+      #count{
+        font-weight:bold;
+        font-size:0.9rem;
+      }
+      #first{
+        color: #8fbc8f;
+        font-size:0.9rem;
+        font-weight:bold;
+        text-shadow: -0.2px 0px black, 0px 0.2px black;
+      }
+      #first:hover{
+        color: black;
+        text-decoration: underline black;
+        font-size:1.1rem;
+      }
+      #second{
+        color: #C8A2C8;
+        font-size:0.9rem;
+        font-weight:bold;
+        text-shadow: -0.2px 0px black, 0px 0.2px black;
+      }
+      #second:hover{
+        color: black;
+        text-decoration: underline black;
+        font-size:1.1rem;
+      }
+      .updown {
+        border: 1px dotted black;
+          width: 0.1px;
+          height: 70%;
+          margin-top:1%;
+      }
+      .mbti{
+        border: 1px solid black;
+        margin: 2%;
+        margin-top:6%;
+      }
+      #bar_charts{
+        width:100%;
+      }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <div id="top">
+      <img
+        style="cursor: pointer"
+        onclick="window.open('https://github.com/izunaaaaa') "
+        src="https://ozcodingschool.com/static/front/images/ozcoding/kdt/ozcoding_logo.png"
+      />
+      <h1>심리 테스트 데이터 차트</h1>
+      <button id="btn" onclick="window.open('https://github.com/izunaaaaa') ">
+        Visit Github
+      </button>
+    </div>
+    <div id="simple">
+      <div class="box">
+        <span class="count_top">Total Users</span>
+        <div class="count">{{ all_count }}</div>
+      </div>
+      <div class="updown"></div>
+      <div class="box">
+        <span class="count_top"> Most numerous MBTI</span>
+        <div class="count">{{ max_mbti }}</div>
+        <div class="percent">{{ kind }}</div>
+        <div class="percent">{{ max_count }} 회 ({{percent}}%)</div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="container">
+        <div class="content">
+          {% for i in chart_data %}
+          <div class="answer">
+            <span id="count"> {{ forloop.counter }}번 문항 :</span>
+            {% if i.first_count > i.second_count %}
+            <span id="first">{{ i.first_answer }} </span>/ {{ i.second_answer }}
+            {% else %} {{ i.first_answer }} /
+            <span id="second">{{ i.second_answer }}</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div id="bar-chart"></div>
+    </div>
+    <div class="mbti">
+        <div id="bar-charts"></div>
+      </option>
+    </div>
+  </body>
+  <script>
+      var chartData = {{ chart_data|safe }};
+      var x = [];
+      var firstY = [];
+      var secondY = [];
+
+      for (var i = chartData.length - 1; i >= 0; i--) {
+        x.push(i+1 + "번 문항");
+        firstY.push(chartData[i].first_count);
+        secondY.push(chartData[i].second_count);
+      }
+
+      var trace1 = {
+        x: firstY,
+        y: x,
+        type: 'bar',
+        marker: {
+          color: '#a5c5a8',
+      },
+        orientation: 'h',
+        name: '1번을 선택한 사람'
+      };
+
+      var trace2 = {
+        x: secondY,
+        y: x,
+        type: 'bar',
+        marker: {
+          color: '#C8A2C8',
+      },
+        orientation: 'h',
+        name: '2번을 선택한 사람'
+      };
+
+      var data = [trace2, trace1];
+
+      var layout = {
+        title: '각 문항별 선택 수',
+        xaxis: {
+          title: 'Count',
+        },
+        barmode: 'group',
+      };
+
+      var mbti_chartData = {{ mbti_chart_data|safe }};
+      var x = [];
+      var y = [];
+
+      for (var i = 0; i < mbti_chartData.length; i++) {
+        x.push(mbti_chartData[i].mbti);
+        y.push(mbti_chartData[i].count);
+      }
+
+      var trace1 = {
+        x: x,
+        y: y,
+        type: 'bar',
+        name: '사람 수',
+        marker: {
+          opacity:0.5,
+          color: 'gray',
+          line: {
+            width: 1
+          }
+        },
+        
+      };
+
+      var trace2 = {
+        x: x,
+        y: y,
+        type: 'scatter',
+        mode: 'lines+markers',
+        marker: {
+          color: '#C8A2C8',
+          symbol: 'diamond',
+          size: 10,
+        },
+        line: {
+          width: 3
+        },
+        name: '사람 수'
+      };
+
+      var mbti_data = [trace1, trace2];
+
+      var mbti_layout = {
+        title: 'MBTI 분포',
+        xaxis: {
+          title: 'MBTI Type'
+        },
+        yaxis: {
+          title: "Count"
+        },
+        barmode: 'group'
+      };
+
+      Plotly.newPlot('bar-charts', mbti_data, mbti_layout);
+
+      Plotly.newPlot('bar-chart', data, layout);
+  </script>
+</html>
