@@ -83,11 +83,12 @@
       }
       #simple>.box{
         height:100%;
-        width:20%;
+        width:30%;
         display:flex;
         align-items: center;
         flex-direction:column;
         justify-content: space-evenly;
+        z-index:1;
       }
       .container {
         height: 100%;
@@ -186,6 +187,25 @@
       #bar_charts{
         width:100%;
       }
+      #kind{
+        font-weight:bold;
+        font-size:1.1rem;
+      }
+      #time{
+        font-size:0.8rem;
+        color:rgb(96,115,138);
+      }
+      .data_set{
+        width:100%;
+        display:flex;
+      }
+      .data{
+        display:flex;
+        width:100%;
+        flex-direction: column;
+        align-items: center;
+
+      }
     </style>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   </head>
@@ -212,6 +232,22 @@
         <div class="count">{{ max_mbti }}</div>
         <div class="percent">{{ kind }}</div>
         <div class="percent">{{ max_count }} 회 ({{percent}}%)</div>
+      </div>
+      <div class="updown"></div>
+      <div class="box">
+        <span class="count_top"> Recent record </span>
+        <div class="data_set">
+        {% for key,value in latest_mbti.items %}
+        <div class="data">
+        <span id="kind">{{ value.0 }} : {{value.1}} </span>
+        {% if key <= 3600 %}
+        <span id="time">{% widthratio key 60 1 %} 분 전</span>
+        {% else %}
+        <span id="time">{% widthratio key 3600 1 %} 시간 전</span>
+        {% endif %}
+        </div>
+        {% endfor %}
+      </div>
       </div>
     </div>
     <div class="main">

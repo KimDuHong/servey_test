@@ -93,6 +93,7 @@ from django.shortcuts import render
 from .models import Result, Kind
 from .serializers import ResultCountSerializer
 from servey.serializers import ServeyCountSerializer
+from django.utils import timezone
 
 
 def bar_chart(request):
@@ -128,6 +129,13 @@ def bar_chart(request):
         dic["mbti"] = i["mbti"]
         dic["count"] = i["count"]
         mbti_chart_data.append(dic)
+    now = timezone.now()
+    lastest_mbti_result = Result.objects.all().order_by("-updated_at")[:2]
+    lastest_list = {
+        int(str((now - i.updated_at).seconds)): [i.mbti, i.kind.kind]
+        for i in lastest_mbti_result
+    }
+
     return render(
         request,
         "bar_chart.html",
@@ -138,6 +146,7 @@ def bar_chart(request):
             "max_count": max_count,
             "percent": percent,
             "kind": max_mbti.kind,
+            "latest_mbti": lastest_list,
             "mbti_chart_data": mbti_chart_data,
         },
     )
