@@ -22,7 +22,7 @@
         color:white;
         border:none;
         position:absolute;
-        right:3%;
+        right:2%;
         height:5%;
         font-size:1.2em;
         padding:0 2em;
@@ -60,9 +60,10 @@
       }
       img{
         position:absolute;
-        left:3%;
+        left:2%;
         width: 6%;
         height: 6%;
+        padding:1%
       }
       .main {
         display: flex;
@@ -88,7 +89,6 @@
         flex-direction:column;
         justify-content: space-evenly;
       }
-      
       .container {
         height: 100%;
         border: 1px solid black;
@@ -102,9 +102,11 @@
       }
       .count_top{
         font-weight:bold;
-
         font-size: 1.2rem;
         color:rgb(96,115,138);
+      }
+      .count_top:hover{
+        color:red;
       }
       .count{
         font-size: 2.5rem;
@@ -112,10 +114,14 @@
         color:black;
         font-weight:bold;
       }
+      .count:hover{color:blue;}
       .percent{
         font-size:0.8rem;
         color:rgb(96,115,138);
 
+      }
+      .percent:hover{
+        color:red;
       }
       #bar-chart {
         border: 1px solid black;
@@ -187,12 +193,12 @@
     <div id="top">
       <img
         style="cursor: pointer"
-        onclick="window.open('https://github.com/izunaaaaa') "
+        onclick="window.open('https://ozcodingschool.com/') "
         src="https://ozcodingschool.com/static/front/images/ozcoding/kdt/ozcoding_logo.png"
       />
       <h1>심리 테스트 데이터 차트</h1>
       <button id="btn" onclick="window.open('https://github.com/izunaaaaa') ">
-        Visit Github
+        Visit Github &rarr;
       </button>
     </div>
     <div id="simple">
@@ -272,6 +278,7 @@
           title: 'Count',
         },
         barmode: 'group',
+        dragmode:"select"
       };
 
       var mbti_chartData = {{ mbti_chart_data|safe }};
@@ -324,11 +331,11 @@
         yaxis: {
           title: "Count"
         },
-        barmode: 'group'
+        barmode: 'group',
+        dragmode:"select"
       };
 
       Plotly.newPlot('bar-charts', mbti_data, mbti_layout);
-
       Plotly.newPlot('bar-chart', data, layout);
   </script>
 </html>
