@@ -116,7 +116,7 @@ def bar_chart(request):
     all_count = 0
     max_count = 0
     for i in result:
-        if max_count < i.count:
+        if max_count <= i.count:
             max_count = i.count
         all_count += i.count
     print(max_count)
