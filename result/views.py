@@ -4,6 +4,9 @@ from .models import Result
 from servey.models import servey
 from .serializers import ResultSerializer, ResultCountSerializer
 from rest_framework.exceptions import NotFound, ParseError
+from count_day.models import count_day
+from django.utils import timezone
+from count_day.models import count_day
 
 # Create your views here.
 
@@ -33,7 +36,6 @@ class ResultDetail(APIView):
         result = self.get_object(mbti)
         result.count += 1
         answer = request.data.get("answer")
-        print(answer)
         if not answer:
             raise ParseError("Answer is required")
         elif type(answer) == int:
@@ -54,7 +56,19 @@ class ResultDetail(APIView):
                 servey_get.second_count += 1
             servey_get.save()
         result.save()
-        print(1)
+        now = timezone.now()
+        all_result = Result.objects.all()
+        all_count = 0
+        for i in all_result:
+            all_count += i.count
+
+        try:
+            day = count_day.objects.get(day=now)
+            day.count = all_count
+            day.save()
+        except count_day.DoesNotExist:
+            count_day.objects.create(day=now, count=all_count)
+
         serializer = ResultSerializer(result)
         return Response(serializer.data)
 
@@ -93,7 +107,6 @@ from django.shortcuts import render
 from .models import Result, Kind
 from .serializers import ResultCountSerializer
 from servey.serializers import ServeyCountSerializer
-from django.utils import timezone
 
 
 def bar_chart(request):
@@ -135,6 +148,10 @@ def bar_chart(request):
         int(str((now - i.updated_at).seconds)): [i.mbti, i.kind.kind]
         for i in lastest_mbti_result
     }
+    count_day_list = sorted(
+        [[str(i.day), i.count] for i in count_day.objects.all()], reverse=True
+    )
+    print(count_day_list)
 
     return render(
         request,
@@ -148,5 +165,6 @@ def bar_chart(request):
             "kind": max_mbti.kind,
             "latest_mbti": lastest_list,
             "mbti_chart_data": mbti_chart_data,
+            "count_day_list": count_day_list,
         },
     )

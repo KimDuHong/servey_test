@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = ("django-insecure-(!cr#p=bhmvk!#sn3me)+fit%e058#u@9s3h(mc80!1f$ccl+u",)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 # https://docs.djangoproject.com/en/3.0/ref/settings/#allowed-hosts
@@ -43,6 +43,7 @@ THIRD_PARTY_APPLICATION = [
     "common.apps.CommonConfig",
     "servey.apps.ServeyConfig",
     "result.apps.ResultConfig",
+    "count_day.apps.CountDayConfig",
 ]
 
 INSTALLED_APPS = [
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "mathfilters",
 ] + THIRD_PARTY_APPLICATION
 
 MIDDLEWARE = [
