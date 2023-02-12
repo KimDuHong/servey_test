@@ -119,6 +119,7 @@ def bar_chart(request):
         if max_count < i.count:
             max_count = i.count
         all_count += i.count
+    print(max_count)
     max_mbti = Result.objects.get(count=max_count)
     chart_data = []
     # print(chart_data == list(serializer.data))
