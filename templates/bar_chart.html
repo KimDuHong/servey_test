@@ -1,13 +1,14 @@
-{% load static %}
+{% load static %} {% load mathfilters %}
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Chart</title>
     <style>
       body {
         height: 100vh;
         margin :0;
         background-color:rgb(240,240,240);
-        
+
       }
       #top{
         width: 100%;
@@ -101,6 +102,9 @@
         align-items: center;
         justify-content: center;
       }
+      .container:hover{
+        transform:scale(1.05);
+      }
       .count_top{
         font-weight:bold;
         font-size: 1.2rem;
@@ -123,12 +127,16 @@
       }
       .percent:hover{
         color:red;
+        font-size:0.9rem;
       }
       #bar-chart {
         border: 1px solid black;
         width: 47%;
         height: 100%;
         margin:2%;
+      }
+      #bar-chart:hover{
+        transform:scale(1.05);
       }
       .content{
         height: 100%;
@@ -179,21 +187,38 @@
           height: 70%;
           margin-top:1%;
       }
-      .mbti{
+      .chart{
+        display:flex;
         border: 1px solid black;
         margin: 2%;
-        margin-top:6%;
+        height:100%;
+        width: 46%;
+        margin-top:5%;
       }
-      #bar_charts{
+      .chart:hover{
+        transform:scale(1.05);
+      }
+      #mbti_chart{
+        width:100%;
+      }
+      #count_chart{
         width:100%;
       }
       #kind{
         font-weight:bold;
         font-size:1.1rem;
       }
+      #kind:hover{
+        color:blue;
+        font-size:1.2rem;
+      }
       #time{
         font-size:0.8rem;
         color:rgb(96,115,138);
+      }
+      #time:hover{
+        font-size:0.9rem;
+        color:red;
       }
       .data_set{
         width:100%;
@@ -204,6 +229,18 @@
         width:100%;
         flex-direction: column;
         align-items: center;
+      }
+      .up{
+        color:green;
+      }
+      .up:hover{
+        font-size:1.2rem;
+      }
+      .big{
+        position:relative;
+        top:5%;
+        font-weight:bold;
+        font-size:1.2rem;
       }
     </style>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -224,6 +261,7 @@
       <div class="box">
         <span class="count_top">Total Users</span>
         <div class="count">{{ all_count }}</div>
+        <spanc class="up"> ⬆{{ all_count|sub:count_day_list.1.1 }}</spanc>
       </div>
       <div class="updown"></div>
       <div class="box">
@@ -236,21 +274,22 @@
       <div class="box">
         <span class="count_top"> Recent record </span>
         <div class="data_set">
-        {% for key,value in latest_mbti.items %}
-        <div class="data">
-        <span id="kind">{{ value.0 }} : {{value.1}} </span>
-        {% if key <= 3600 %}
-        <span id="time">{% widthratio key 60 1 %} 분 전</span>
-        {% else %}
-        <span id="time">{% widthratio key 3600 1 %} 시간 전</span>
-        {% endif %}
+          {% for key,value in latest_mbti.items %}
+          <div class="data">
+            <span id="kind">{{ value.0 }} : {{value.1}} </span>
+            {% if key <= 3600 %}
+            <span id="time">{% widthratio key 60 1 %} 분 전</span>
+            {% else %}
+            <span id="time">{% widthratio key 3600 1 %} 시간 전</span>
+            {% endif %}
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
-      </div>
       </div>
     </div>
     <div class="main">
       <div class="container">
+        <div class="big">더 많이 선택한 항목</div>
         <div class="content">
           {% for i in chart_data %}
           <div class="answer">
@@ -266,114 +305,158 @@
       </div>
       <div id="bar-chart"></div>
     </div>
-    <div class="mbti">
-        <div id="bar-charts"></div>
-      </option>
+    <div class="main">
+      <div class="chart">
+        <div id="count_chart"></div>
+      </div>
+      <div class="chart">
+        <div id="mbti_chart"></div>
+      </div>
     </div>
   </body>
   <script>
-      var chartData = {{ chart_data|safe }};
-      var x = [];
-      var firstY = [];
-      var secondY = [];
+    var chartData = {{ chart_data|safe }};
+    var x = [];
+    var firstY = [];
+    var secondY = [];
+    for (var i = chartData.length - 1; i >= 0; i--) {
+      x.push(i+1 + "번 문항");
+      firstY.push(chartData[i].first_count);
+      secondY.push(chartData[i].second_count);
+    }
 
-      for (var i = chartData.length - 1; i >= 0; i--) {
-        x.push(i+1 + "번 문항");
-        firstY.push(chartData[i].first_count);
-        secondY.push(chartData[i].second_count);
-      }
+    var trace1 = {
+      x: firstY,
+      y: x,
+      type: 'bar',
+      marker: {
+        color: '#a5c5a8',
+    },
+      orientation: 'h',
+      name: '1번을 선택한 사람'
+    };
 
-      var trace1 = {
-        x: firstY,
-        y: x,
-        type: 'bar',
-        marker: {
-          color: '#a5c5a8',
+    var trace2 = {
+      x: secondY,
+      y: x,
+      type: 'bar',
+      marker: {
+        color: '#C8A2C8',
+    },
+      orientation: 'h',
+      name: '2번을 선택한 사람'
+    };
+
+    var data = [trace2, trace1];
+
+    var layout = {
+      title: '각 문항별 선택 수',
+      xaxis: {
+        title: 'Count',
       },
-        orientation: 'h',
-        name: '1번을 선택한 사람'
-      };
+      barmode: 'group',
+      dragmode:"select"
+    };
 
-      var trace2 = {
-        x: secondY,
-        y: x,
-        type: 'bar',
-        marker: {
-          color: '#C8A2C8',
+    var mbti_chartData = {{ mbti_chart_data|safe }};
+    var x = [];
+    var y = [];
+    var per_y =[];
+
+    for (var i = 0; i < mbti_chartData.length; i++) {
+      x.push(mbti_chartData[i].mbti);
+      y.push(mbti_chartData[i].count);
+      per_y.push(Math.round((mbti_chartData[i].count/{{all_count}}*100)));
+    }
+
+    var trace1 = {
+      x: x,
+      y: y,
+      type: 'bar',
+      name: '사람 수',
+
+      marker: {
+        opacity:0.6,
+        color: 'gray',
+        line: {
+          width: 1
+        }
       },
-        orientation: 'h',
-        name: '2번을 선택한 사람'
-      };
+    };
 
-      var data = [trace2, trace1];
+    var trace2 = {
+      x: x,
+      y: per_y,
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: {
+        color: '#C8A2C8',
+        symbol: 'diamond',
+        size: 10,
+      },
+      line: {
+        width: 3
+      },
+      name: '비율(%)',
+    };
 
-      var layout = {
-        title: '각 문항별 선택 수',
-        xaxis: {
-          title: 'Count',
+    var mbti_data = [trace1, trace2];
+
+    var mbti_layout = {
+      title: 'MBTI 분포',
+      xaxis: {
+        title: 'MBTI Type',
+        tickfont: {
+          size: 10, // font size in pixels
         },
-        barmode: 'group',
-        dragmode:"select"
-      };
-
-      var mbti_chartData = {{ mbti_chart_data|safe }};
-      var x = [];
-      var y = [];
-      var per_y =[];
-
-      for (var i = 0; i < mbti_chartData.length; i++) {
-        x.push(mbti_chartData[i].mbti);
-        y.push(mbti_chartData[i].count);
-        per_y.push(parseInt(mbti_chartData[i].count/{{all_count}}*100));
-      }
-
-      var trace1 = {
+      },
+      yaxis: {
+        title: "Count"
+      },
+      barmode: 'group',
+      dragmode:"select"
+    };
+    var count_day_list = {{ count_day_list|safe }};
+    var x = [];
+    var y = [];
+    for (var i = 0; i < count_day_list.length; i++){
+      x.push(count_day_list[i][0]);
+      y.push(count_day_list[i][1]);
+    }
+    var count_data = [
+    {
         x: x,
         y: y,
-        type: 'bar',
-        name: '사람 수',
-
-        marker: {
-          opacity:0.6,
-          color: 'gray',
-          line: {
-            width: 1
-          }
-        },
-      };
-      
-      var trace2 = {
-        x: x,
-        y: per_y,
         type: 'scatter',
         mode: 'lines+markers',
         marker: {
-          color: '#C8A2C8',
-          symbol: 'diamond',
-          size: 10,
+        color: '#C8A2C8',
+        symbol: 'diamond',
+        size: 7,
+      },
+      line: {
+        width: 3
+      },
+    }
+    ]
+    var count_layout ={
+      title: '이용자 수 증가',
+      xaxis: {
+        title: '날짜',
+        tickfont: {
+          size: 10, // font size in pixels
         },
-        line: {
-          width: 3
-        },
-        name: '비율(%)',
-      };
+      },
+      yaxis: {
+        title: "Count"
+      },
+      dragmode:"select"
+    }
 
-      var mbti_data = [trace1, trace2];
+    Plotly.newPlot('count_chart', count_data, count_layout);
 
-      var mbti_layout = {
-        title: 'MBTI 분포',
-        xaxis: {
-          title: 'MBTI Type'
-        },
-        yaxis: {
-          title: "Count"
-        },
-        barmode: 'group',
-        dragmode:"select"
-      };
 
-      Plotly.newPlot('bar-charts', mbti_data, mbti_layout);
-      Plotly.newPlot('bar-chart', data, layout);
-      
+    Plotly.newPlot('mbti_chart', mbti_data, mbti_layout);
+    Plotly.newPlot('bar-chart', data, layout);
   </script>
 </html>

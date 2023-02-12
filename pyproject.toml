@@ -17,6 +17,7 @@ psycopg2-binary = "^2.9.5"
 matplotlib = "^3.6.3"
 pandas = "^1.5.3"
 plotly = "^5.13.0"
+django-mathfilters = "^1.0.0"
 
 
 [build-system]
