@@ -119,8 +119,11 @@ def bar_chart(request):
         if max_count <= i.count:
             max_count = i.count
         all_count += i.count
-    print(max_count)
-    max_mbti = Result.objects.get(count=max_count)
+    max_mbti = Result.objects.filter(count=max_count)
+    max_mbti = max_mbti[0]
+
+    print(max_mbti)
+
     chart_data = []
     # print(chart_data == list(serializer.data))
     # print(chart_data)
@@ -131,7 +134,10 @@ def bar_chart(request):
         dic["first_count"] = i["first_count"]
         dic["second_count"] = i["second_count"]
         chart_data.append(dic)
-    percent = int(max_count / all_count * 100)
+    try:
+        percent = int(max_count / all_count * 100)
+    except ZeroDivisionError:
+        percent = 0
 
     all_mbti_result = Result.objects.all()
     serializer = ResultCountSerializer(all_mbti_result, many=True)
