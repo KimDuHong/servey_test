@@ -342,7 +342,7 @@
       type: 'bar',
       marker: {
         color: '#C8A2C8',
-    },
+      },
       orientation: 'h',
       name: '2번을 선택한 사람'
     };
@@ -357,6 +357,8 @@
       barmode: 'group',
       dragmode:"select"
     };
+
+    Plotly.newPlot('bar-chart', data, layout);
 
     var mbti_chartData = {{ mbti_chart_data|safe }};
     var x = [];
@@ -416,6 +418,9 @@
       barmode: 'group',
       dragmode:"select"
     };
+
+    Plotly.newPlot('mbti_chart', mbti_data, mbti_layout);
+
     var count_day_list = {{ count_day_list|safe }};
     var x = [];
     var y = [];
@@ -423,13 +428,13 @@
       x.push(count_day_list[i][0]);
       y.push(count_day_list[i][1]);
     }
-    var count_data = [
+    var trace1 = [
     {
-        x: x,
-        y: y,
-        type: 'scatter',
-        mode: 'lines+markers',
-        marker: {
+      x: x,
+      y: y,
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker: {
         color: '#C8A2C8',
         symbol: 'diamond',
         size: 7,
@@ -439,6 +444,24 @@
       },
     }
     ]
+    var trace2 = [
+    {
+      x: x,
+      y: y,
+      type: 'bar',
+      marker: {
+        color: 'black',
+        symbol: 'diamond',
+        size: 7,
+      },
+      line: {
+        width: 3
+      },
+    }
+    ]
+
+    var count_data = [trace1, trace2];
+
     var count_layout ={
       title: '이용자 수 증가',
       xaxis: {
@@ -450,13 +473,10 @@
       yaxis: {
         title: "Count"
       },
+      barmode: 'group',
       dragmode:"select"
     }
-    console.log(111);
-    Plotly.newPlot('count_chart', count_data, count_layout);
 
-
-    Plotly.newPlot('mbti_chart', mbti_data, mbti_layout);
-    Plotly.newPlot('bar-chart', data, layout);
+    Plotly.newPlot('count_chart', trace2, count_layout);
   </script>
 </html>

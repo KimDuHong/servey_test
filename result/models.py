@@ -48,6 +48,8 @@ class Kind(models.Model):
         Sec = ("보안전문가", "보안전문가")
 
     kind = models.CharField(max_length=20, choices=KindChoices.choices)
+    similar = models.CharField(max_length=20, choices=KindChoices.choices)
+    worst = models.CharField(max_length=20, choices=KindChoices.choices)
     surmmary = models.CharField(max_length=30)
     tendency = models.ManyToManyField(
         "result.Tendencies",
