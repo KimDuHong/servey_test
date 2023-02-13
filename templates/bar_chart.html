@@ -422,11 +422,15 @@
     Plotly.newPlot('mbti_chart', mbti_data, mbti_layout);
 
     var count_day_list = {{ count_day_list|safe }};
+    var count_day_list_day = {{ count_day_list_day|safe }};
     var x = [];
     var y = [];
-    for (var i = 0; i < count_day_list.length; i++){
+    var cum_y = [];
+    var cum_sum = 0;
+    for (var i = 0; i < count_day_list.length; i++) {
       x.push(count_day_list[i][0]);
       y.push(count_day_list[i][1]);
+      cum_y.push(count_day_list_day[i][1])
     }
     var trace1 = [
     {
@@ -434,34 +438,28 @@
       y: y,
       type: 'scatter',
       mode: 'lines+markers',
-      marker: {
-        color: '#C8A2C8',
-        symbol: 'diamond',
-        size: 7,
-      },
-      line: {
-        width: 3
-      },
-    }
-    ]
+      marker:
+      {   color: '#C8A2C8',
+          symbol: 'diamond',
+          size: 7,
+        },
+      line: {    width: 3  },
+      name: '누적 사용자'}
+      ];
     var trace2 = [
     {
       x: x,
-      y: y,
-      type: 'bar',
-      marker: {
-        color: 'black',
-        symbol: 'diamond',
+      y: cum_y,
+      type: 'scatter',
+      mode: 'lines+markers',
+      marker:
+      {
+        color: '#6495ED',
+        symbol: 'star',
         size: 7,
       },
-      line: {
-        width: 3
-      },
-    }
-    ]
-
-    var count_data = [trace1, trace2];
-
+      line: {    width: 3  },
+      name: '일일 사용자'}];
     var count_layout ={
       title: '이용자 수 증가',
       xaxis: {
@@ -475,8 +473,7 @@
       },
       barmode: 'group',
       dragmode:"select"
-    }
-
-    Plotly.newPlot('count_chart', trace2, count_layout);
+    };
+    Plotly.newPlot('count_chart', trace1.concat(trace2), count_layout);
   </script>
 </html>

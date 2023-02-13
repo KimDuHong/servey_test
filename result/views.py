@@ -157,7 +157,12 @@ def bar_chart(request):
         count_day_list_day.append(
             [count_day_list[i][0], count_day_list[i][1] - count_day_list[i + 1][1]]
         )
-    count_day_list_day.append([count_day_list[len(count_day_list) - 1][0], 0])
+    count_day_list_day.append(
+        [
+            count_day_list[len(count_day_list) - 1][0],
+            count_day_list[len(count_day_list) - 1][1],
+        ]
+    )
     return render(
         request,
         "bar_chart.html",
