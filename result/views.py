@@ -152,8 +152,12 @@ def bar_chart(request):
     count_day_list = sorted(
         [[str(i.day), i.count] for i in count_day.objects.all()], reverse=True
     )
-    print(count_day_list)
-
+    count_day_list_day = []
+    for i in range(len(count_day_list) - 1):
+        count_day_list_day.append(
+            [count_day_list[i][0], count_day_list[i][1] - count_day_list[i + 1][1]]
+        )
+    count_day_list_day.append([count_day_list[len(count_day_list) - 1][0], 0])
     return render(
         request,
         "bar_chart.html",
@@ -167,5 +171,6 @@ def bar_chart(request):
             "latest_mbti": lastest_list,
             "mbti_chart_data": mbti_chart_data,
             "count_day_list": count_day_list,
+            "count_day_list_day": count_day_list_day,
         },
     )
