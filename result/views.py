@@ -6,9 +6,11 @@ from .serializers import ResultSerializer, ResultCountSerializer
 from rest_framework.exceptions import NotFound, ParseError
 from count_day.models import count_day
 from django.utils import timezone
+from django.shortcuts import render
+from .models import Result, Kind
+from .serializers import ResultCountSerializer
+from servey.serializers import ServeyCountSerializer
 from count_day.models import count_day
-
-# Create your views here.
 
 
 class Results(APIView):
@@ -43,18 +45,19 @@ class ResultDetail(APIView):
 
         if len(answer) != 9:
             raise ParseError("Answer length must be 9")
+
         for i in answer:
             if i != "1" and i != "2":
                 raise ParseError("Answer contains only 1 or 2")
 
         for idx, data in enumerate(answer):
             servey_get = servey.objects.get(pk=idx + 1)
-
             if data == "1":
                 servey_get.first_count += 1
             else:
                 servey_get.second_count += 1
             servey_get.save()
+
         result.save()
         now = timezone.now()
         all_result = Result.objects.all()
@@ -103,12 +106,6 @@ class ResultCount(APIView):
     #         return Response(serializer.errors, status=400)
 
 
-from django.shortcuts import render
-from .models import Result, Kind
-from .serializers import ResultCountSerializer
-from servey.serializers import ServeyCountSerializer
-
-
 def bar_chart(request):
     all_result = servey.objects.all()
     serializer = ServeyCountSerializer(all_result, many=True)
@@ -121,8 +118,6 @@ def bar_chart(request):
         all_count += i.count
     max_mbti = Result.objects.filter(count=max_count)
     max_mbti = max_mbti[0]
-
-    print(max_mbti)
 
     chart_data = []
     # print(chart_data == list(serializer.data))

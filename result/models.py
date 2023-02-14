@@ -50,7 +50,7 @@ class Kind(models.Model):
     kind = models.CharField(max_length=20, choices=KindChoices.choices)
     similar = models.CharField(max_length=20, choices=KindChoices.choices)
     worst = models.CharField(max_length=20, choices=KindChoices.choices)
-    surmmary = models.CharField(max_length=30)
+    surmmary = models.CharField(max_length=50)
     tendency = models.ManyToManyField(
         "result.Tendencies",
         related_name="tendency",
